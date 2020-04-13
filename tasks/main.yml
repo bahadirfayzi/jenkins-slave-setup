@@ -4,7 +4,8 @@
   user: 
     name: jenkins
     password: "{{ jenkins_password }}"
-
+    shell: /bin/bash 
+    
 - name: Create remote root directory
   file: 
     path: "{{ remote_root_directory}}"
@@ -18,7 +19,10 @@
     state: present
   with_items: 
     - java
-    - python
+    - python36
+    - python3-pip
+    - epel-release
+    - ansible
 
 - name: Create .ssh directory
   file:
@@ -33,6 +37,13 @@
   copy: 
     src: authorized_keys
     dest: /home/jenkins/.ssh/authorized_keys
+    
+- name: Add Jenkins to sudoers group
+  become: true
+  lineinfile: 
+    path: /etc/sudoers
+    state: present
+    line: "jenkins ALL=(ALL) NOPASSWD: ALL"
 
 
 
